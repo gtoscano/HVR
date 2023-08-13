@@ -56,12 +56,12 @@ if __name__ == '__main__':
 
     file_list = ['finalresults_0001-rcp8.5_gen20.csv', 'finalresults_0001-rcp8.5_gen40.csv', 'finalresults_0001-rcp8.5_gen80.csv' ]
     all_solutions= read_all_files(file_list, ['yield_mz','yield_sb','yield_wh'])
-    nadir = all_solutions.min()
-    ideal = all_solutions.max()
+    ideal = all_solutions.min()
+    nadir = all_solutions.max()
 
 
     # Normalize the data to the range [0, 1] using provided min and max
-    data_normalized = (all_solutions - nadir) / (ideal - nadir)
+    data_normalized = (all_solutions - ideal) / (nadir - ideal)
 
     save_dataframe_to_file(data_normalized, 'accumulated_pf.out')
     accumulated_hv = compute_hv('accumulated_pf.out')
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     for pareto in file_list:
         filename = 'pareto_pf_{}.out'.format(n)
         solutions = read_all_files([pareto], ['yield_mz','yield_sb','yield_wh'])
-        data_normalized = (solutions - nadir) / (ideal - nadir)
+        data_normalized = (solutions - ideal) / (nadir - ideal)
         save_dataframe_to_file(data_normalized, filename)
         pareto_hv = compute_hv(filename)
         print("HV of {}: ".format(n), pareto_hv)
