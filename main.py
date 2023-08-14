@@ -9,9 +9,9 @@ import numpy
 
 
 
-def compute_hv(pf_path):
+def compute_hv(pf_path, nobjs):
     hv_list = []
-    b_hv_pf = subprocess.check_output(['./exec_hv', pf_path])
+    b_hv_pf = subprocess.check_output(['./exec_hv', pf_path, str(nobjs)])
     hv = float(b_hv_pf)
     return hv
 
@@ -52,7 +52,7 @@ def save_dataframe_to_file(df, file_name):
         file.write("#\n")
 
 if __name__ == '__main__':
-
+    nobjs = 3
 
     file_list = ['finalresults_0001-rcp8.5_gen20.csv', 'finalresults_0001-rcp8.5_gen40.csv', 'finalresults_0001-rcp8.5_gen80.csv' ]
     all_solutions= read_all_files(file_list, ['yield_mz','yield_sb','yield_wh'])
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     data_normalized = (all_solutions - ideal) / (nadir - ideal)
 
     save_dataframe_to_file(data_normalized, 'accumulated_pf.out')
-    accumulated_hv = compute_hv('accumulated_pf.out')
+    accumulated_hv = compute_hv('accumulated_pf.out', nobjs)
     print("HV of Accumulated PF: ", accumulated_hv)
 
     n = 0
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         solutions = read_all_files([pareto], ['yield_mz','yield_sb','yield_wh'])
         data_normalized = (solutions - ideal) / (nadir - ideal)
         save_dataframe_to_file(data_normalized, filename)
-        pareto_hv = compute_hv(filename)
+        pareto_hv = compute_hv(filename, nobjs)
         print("HV of {}: ".format(n), pareto_hv)
         print("HVR o {}: ".format(n), pareto_hv / accumulated_hv)
         n += 1

@@ -35,14 +35,27 @@ std::string exec_command(std::string command) {
    return result;
 }
 
-double compute_hv(std::string filename) {
-    std::vector<double> hv(3, 0.0);    
+std::string nadir_point(int nobjs) {
+    std::string result;
+    for (int i = 0; i < nobjs; ++i) {
+        result += "1.1";
+        if (i < nobjs - 1) {
+            result += " ";
+        }
+    }
+    return result;
+}
+
+double compute_hv(std::string filename, int nobjs) {
+    std::vector<double> hv(2,0.0);    
     std::string WFG_PATH = getEnvVar("OPT4CAST_WFG_PATH", "./wfg");
-    std::string s = exec_command(fmt::format("{} -q {} 1.1 1.1 1.1", WFG_PATH, filename));
+    std::string nadir = nadir_point(nobjs);
+    std::string s = exec_command(fmt::format("{} -q {} {}", WFG_PATH, filename, nadir));
     std::string delimiter = " ";
     size_t pos = 0;
     std::string token;
     int i =0;
+
     while ((pos = s.find(delimiter)) != std::string::npos) {
         token = s.substr(0, pos);
         hv[i]= stof(token);
@@ -51,29 +64,18 @@ double compute_hv(std::string filename) {
     }
     hv[i] = stof(s);
 
-    //std::cout<<"current hv: "<<current_hv[0]<<" raw hv: "<<hv_raw_pf<<std::endl;
-    //if (hv_raw_pf * (1.0-pct_hv_to_exit) < current_hv[0] ){
-    //    return true;
-    //}
     return hv[0];
 }
 
 
 int main(int argc, char **argv) {
-  std::vector<double> min(3, 0.0);    
-  std::vector<double> max(3, 1.0);    
+  int nobjs = 2;
 
-  if (argc < 2) {
-    std::cerr<<fmt::format("Use: {} normalized_pareto_front\n", argv[0]);
+  if (argc < 3 || argc > 3) {
+    std::cerr<<fmt::format("Use: {} normalized_pareto_front number_of_objectives\n", argv[0]);
     exit(1);
   }
-
-  if (argc > 6) {
-    min[0] = std::stoi(argv[3]);
-    min[1] = std::stoi(argv[4]);
-    max[0] = std::stoi(argv[5]);
-    max[1] = std::stoi(argv[6]);
-  }
+  nobjs = std::stoi(argv[2]);
 
   std::string filename = argv[1];
 
@@ -82,11 +84,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  std::cout<<compute_hv(filename) <<std::endl;
-    //printf("\n Enter the Raw HV of the Pareto front: ");
-    //scanf("%lf", &hv_raw_pf);
-    //printf("\n Enter the PCT HV to Exit: ");
-    //scanf("%lf", &pct_hv_to_exit);
+  std::cout<<compute_hv(filename, nobjs) <<std::endl;
   return 0;
 
 }
