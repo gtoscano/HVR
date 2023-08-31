@@ -26,7 +26,7 @@ def read_all_files(file_list, columns):
         all_data.extend(df[columns].values.tolist())
     all_data_df = pd.DataFrame(all_data, columns=columns)
     
-    return all_data_df
+    return all_data_df * -1.0
 
 def save_to_file(data, file_name):
     with open(file_name, 'w') as file:
