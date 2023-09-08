@@ -48,7 +48,7 @@ std::string nadir_point(int nobjs) {
 
 double compute_hv(std::string filename, int nobjs) {
     std::vector<double> hv(2,0.0);    
-    std::string WFG_PATH = getEnvVar("OPT4CAST_WFG_PATH", "./wfg");
+    std::string WFG_PATH = getEnvVar("WFG_PATH", "./wfg");
     std::string nadir = nadir_point(nobjs);
     std::string s = exec_command(fmt::format("{} -q {} {}", WFG_PATH, filename, nadir));
     std::string delimiter = " ";
